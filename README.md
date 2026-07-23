@@ -2,7 +2,6 @@
 
 ![Bash](https://img.shields.io/badge/Language-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![Linux](https://img.shields.io/badge/OS-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![License](https://img.shields.io/badge/License-MIT-blue.style=for-the-badge)
 
 **Home-sorter** is an interactive, lightweight, and multilingual Shell Script (Bash) designed to clean up your `Downloads` directory by organizing loose files into their respective standard Linux `HOME` folders.
 
