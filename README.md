@@ -33,20 +33,18 @@ The script identifies file types based on standard extensions and routes them ac
 ## 🖥️ Terminal Demo / Output Example
 
 ```text
-Olá, pinky!
-Este script organiza os arquivos do diretório Downloads nos diretórios respectivos do HOME.
+Hello, pinky
+This script organizes files from the Downloads directory.
+Start folder organization? (y/n): y
 
-Iniciar organização de pastas? (s/n): s
+Starting file organization...
+[✔] Documents transferred
+[✔] Images transferred
+[✔] Music transferred
+[✔] Videos transferred
+Do you want to revert the process? (y/n): n
 
-Iniciando organização de arquivos...
-[✔] Documentos transferidos
-[✔] Imagens transferidas
-[✔] Músicas transferidas
-[✔] Vídeos transferidos
-
-Deseja reverter o processo? (s/n): n
-
-[✔] Operação finalizada com sucesso.
+[✔] Operation completed successfully.
 ```
 
 ---
