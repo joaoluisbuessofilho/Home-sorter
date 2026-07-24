@@ -59,9 +59,8 @@ Do you want to revert the process? (y/n): n
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/joaoluisbuessofilho/Home-sorter.git](https://github.com/joaoluisbuessofilho/Home-sorter.git)
+git clone https://github.com/joaoluisbuessofilho/Home-sorter.git
 cd Home-sorter
-```
 
 ### 2. Make the script executable
 ```bash
