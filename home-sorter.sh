@@ -33,12 +33,21 @@ else
     MSG_CANCEL="[✘] Operation canceled by user."
     CONFIRM_CHAR="y"
 fi
+
 #Dynamically find user directories using xdg-user-dir (Fallback to $HOME if missing)
 DIR_DOWNLOADS=$(xdg-user-dir DOWNLOAD 2>/dev/null || echo "$HOME/Downloads")
 DIR_DOCS=$(xdg-user-dir DOCUMENTS 2>/dev/null || echo "$HOME/Documents")
 DIR_PICS=$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")
 DIR_MUSIC=$(xdg-user-dir MUSIC 2>/dev/null || echo "$HOME/Music")
 DIR_VIDEOS=$(xdg-user-dir VIDEOS 2>/dev/null || echo "$HOME/Videos")
+
+EXT_DOCS=(pdf docx doc txt odt xlsx xls csv pptx ppt epub rtf md)
+EXT_PICS=(jpg jpeg png gif webp svg bmp tiff heic)
+EXT_MUSIC=(mp3 flac ogg wav m4a aac wma)
+EXT_VIDEOS=(mp4 mkv webm avi mov flv)
+
+# Registry array that stores every file moving 
+declare -a MOVED_LOG=()
 
 #User Greetings
 echo "$MSG_WELCOME"
@@ -48,32 +57,53 @@ sleep 1
 read -r -p "$MSG_PROMPT" RESPONSE
 echo ""
 
-#Validate Input (converts input to lowercase)
 if [[ "${RESPONSE,,}" == "$CONFIRM_CHAR" || "${RESPONSE,,}" == "s" || "${RESPONSE,,}" == "y" ]]; then
     echo "$MSG_START"
-    
-    #Ensure directories exist
     mkdir -p "$DIR_DOCS" "$DIR_PICS" "$DIR_MUSIC" "$DIR_VIDEOS"
 
     #Move Documents
-    mv "$DIR_DOWNLOADS"/*.pdf "$DIR_DOCS/" 2>/dev/null
+    for ext in "${EXT_DOCS[@]}"; do
+        for file in "$DIR_DOWNLOADS"/*."$ext"; do
+            [[ -e "$file" ]] || continue
+            echo "→ $(basename "$file")"
+            mv "$file" "$DIR_DOCS/" 2>/dev/null
+            MOVED_LOG+=("${file}::${DIR_DOCS}/$(basename "$file")")
+        done
+    done
     echo "$MSG_DOCS"
-    sleep 1
 
     #Move Pictures
-    mv "$DIR_DOWNLOADS"/*.jpg "$DIR_DOWNLOADS"/*.png "$DIR_PICS/" 2>/dev/null
+    for ext in "${EXT_PICS[@]}"; do
+        for file in "$DIR_DOWNLOADS"/*."$ext"; do
+            [[ -e "$file" ]] || continue
+            echo "→ $(basename "$file")"
+            mv "$file" "$DIR_PICS/" 2>/dev/null
+            MOVED_LOG+=("${file}::${DIR_PICS}/$(basename "$file")")
+        done
+    done
     echo "$MSG_PICS"
-    sleep 1
 
     #Move Musics
-    mv "$DIR_DOWNLOADS"/*.mp3 "$DIR_DOWNLOADS"/*.flac "$DIR_MUSIC/" 2>/dev/null
+    for ext in "${EXT_MUSIC[@]}"; do
+        for file in "$DIR_DOWNLOADS"/*."$ext"; do
+            [[ -e "$file" ]] || continue
+            echo "→ $(basename "$file")"
+            mv "$file" "$DIR_MUSIC/" 2>/dev/null
+            MOVED_LOG+=("${file}::${DIR_MUSIC}/$(basename "$file")")
+        done
+    done
     echo "$MSG_MUS"
-    sleep 1
-    
+
     #Move Videos
-    mv "$DIR_DOWNLOADS"/*.mp4 "$DIR_VIDEOS/" 2>/dev/null
+    for ext in "${EXT_VIDEOS[@]}"; do
+        for file in "$DIR_DOWNLOADS"/*."$ext"; do
+            [[ -e "$file" ]] || continue
+            echo "→ $(basename "$file")"
+            mv "$file" "$DIR_VIDEOS/" 2>/dev/null
+            MOVED_LOG+=("${file}::${DIR_VIDEOS}/$(basename "$file")")
+        done
+    done
     echo "$MSG_VIDS"
-    sleep 1
 
     #Rollback prompt
     read -r -p "$MSG_REVERT_PROMPT" RESPONSEREVERT
@@ -81,16 +111,21 @@ if [[ "${RESPONSE,,}" == "$CONFIRM_CHAR" || "${RESPONSE,,}" == "s" || "${RESPONS
 
     if [[ "${RESPONSEREVERT,,}" == "$CONFIRM_CHAR" || "${RESPONSEREVERT,,}" == "s" || "${RESPONSEREVERT,,}" == "y" ]]; then
         echo "$MSG_REVERT_START"
-        
-        mv "$DIR_DOCS"/*.pdf "$DIR_DOWNLOADS/" 2>/dev/null
-        mv "$DIR_PICS"/*.jpg "$DIR_PICS"/*.png "$DIR_DOWNLOADS/" 2>/dev/null
-        mv "$DIR_MUSIC"/*.mp3 "$DIR_MUSIC"/*.flac "$DIR_DOWNLOADS/" 2>/dev/null
-        mv "$DIR_VIDEOS"/*.mp4 "$DIR_DOWNLOADS/" 2>/dev/null
-        
+
+        for entry in "${MOVED_LOG[@]}"; do
+            original="${entry%%::*}"
+            current="${entry##*::}"
+
+            if [[ -e "$current" ]]; then
+                mv "$current" "$original" 2>/dev/null
+                echo "↺ $(basename "$current")"
+            fi
+        done
+
         echo "$MSG_REVERT_DONE"
     else
         echo "$MSG_SUCCESS"
-    fi    
+    fi
 else
     echo "$MSG_CANCEL"
     sleep 1
